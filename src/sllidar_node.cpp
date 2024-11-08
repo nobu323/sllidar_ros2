@@ -60,7 +60,11 @@ class SLlidarNode : public rclcpp::Node
     {
 
       scan_pub = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", rclcpp::QoS(rclcpp::KeepLast(10)));
-      
+      rclcpp::on_shutdown([this]() {
+          if (!drv) return;
+          drv->disconnect();
+          return;
+      });
     }
 
   private:    
@@ -439,7 +443,6 @@ public:
 
         return 0;
     }
-
 
   private:
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub;
