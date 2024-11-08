@@ -18,6 +18,7 @@ def generate_launch_description():
     inverted = LaunchConfiguration('inverted', default='false')
     angle_compensate = LaunchConfiguration('angle_compensate', default='true')
     scan_mode = LaunchConfiguration('scan_mode', default='Standard')
+    topic_name = LaunchConfiguration('scan_topic', default='/scan')
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -54,11 +55,19 @@ def generate_launch_description():
             'scan_mode',
             default_value=scan_mode,
             description='Specifying scan mode of lidar'),
+        
+        DeclareLaunchArgument(
+            'topic_name', default_value=topic_name,
+            description='Topic name for scan data'
+        ),
 
         Node(
             package='sllidar_ros2',
             executable='sllidar_node',
             name='sllidar_node',
+            remappings=[
+                ('/scan', topic_name)
+            ],
             parameters=[{'channel_type':channel_type,
                          'serial_port': serial_port, 
                          'serial_baudrate': serial_baudrate, 
